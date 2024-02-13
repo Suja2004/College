@@ -13,16 +13,13 @@ import javax.swing.JOptionPane;
 import javax.swing.table.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import net.proteanit.sql.DbUtils;
 /* *
  * @author Suja
  */
-public class AHOME extends javax.swing.JFrame {
+public final class AHOME extends javax.swing.JFrame {
 
     /**
      * Creates new form THOME
@@ -30,6 +27,7 @@ public class AHOME extends javax.swing.JFrame {
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
+    College clg = new College();
     private DefaultTableModel model1;
     private String imagePath;
     private int rowIndex;
@@ -38,8 +36,10 @@ public class AHOME extends javax.swing.JFrame {
         initComponents();
         conn = DB.Connection(); 
         updateCombo();
+        init();
         showAllCRecord();
         showAllARecord();
+        showAllTRecord();
     }
     private void updateCombo() {
         String sql="Select * from college";
@@ -58,20 +58,20 @@ public class AHOME extends javax.swing.JFrame {
 public void showCRecord(int id) {
     try {
         stmt = conn.createStatement();
-        String sql = "SELECT clgid, clgname, location, phone FROM college WHERE clgid=?";
+        String sql = "SELECT * FROM college WHERE clgid=?";
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setInt(1, id);
         ResultSet res = preparedStatement.executeQuery();
         
         // Define column names for your table model
-        String[] columnNames = {"College ID", "College Name", "Location", "Phone"};
+        String[] columnNames = {"College ID", "College Name","College Code", "Location", "Phone"};
 
         // Create an empty table model with the defined column names
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         // Populate the table model with the query result
         while (res.next()) {
-            Object[] row = {res.getInt("clgid"), res.getString("clgname"), res.getString("location"), res.getString("phone")};
+            Object[] row = {res.getInt("clgid"), res.getString("clgname"), res.getString("clgcode"), res.getString("location"), res.getString("phone")};
             model.addRow(row);
         }
 
@@ -85,18 +85,18 @@ public void showCRecord(int id) {
 public void showAllCRecord() {
     try {
         stmt = conn.createStatement();
-        String sql = "SELECT clgid, clgname, location, phone FROM college";
+        String sql = "SELECT * FROM college";
         ResultSet res = stmt.executeQuery(sql);
         
         // Define column names for your table model
-        String[] columnNames = {"College ID", "College Name", "Location", "Phone"};
+        String[] columnNames = {"College ID", "College Name","College Code", "Location", "Phone"};
 
         // Create an empty table model with the defined column names
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         // Populate the table model with the query result
         while (res.next()) {
-            Object[] row = {res.getInt("clgid"), res.getString("clgname"), res.getString("location"), res.getString("phone")};
+            Object[] row = {res.getInt("clgid"), res.getString("clgname"), res.getString("clgcode"), res.getString("location"), res.getString("phone")};
             model.addRow(row);
         }
 
@@ -131,6 +131,8 @@ public void showAllCRecord() {
         cname = new javax.swing.JTextField();
         cno = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        ccode = new javax.swing.JTextField();
         jPanel17 = new javax.swing.JPanel();
         jPanel18 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
@@ -186,8 +188,6 @@ public void showAllCRecord() {
         jLabel4 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         temail = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        clg = new javax.swing.JComboBox<>();
         jLabel10 = new javax.swing.JLabel();
         tdept = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
@@ -197,12 +197,12 @@ public void showAllCRecord() {
         jPanel26 = new javax.swing.JPanel();
         jPanel27 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        tid = new javax.swing.JTextField();
         jButton25 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jPanel28 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        ttable = new javax.swing.JTable();
         jPanel29 = new javax.swing.JPanel();
         jButton20 = new javax.swing.JButton();
         jButton21 = new javax.swing.JButton();
@@ -287,10 +287,25 @@ public void showAllCRecord() {
                 cnoActionPerformed(evt);
             }
         });
+        cno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cnoKeyTyped(evt);
+            }
+        });
 
         jLabel15.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setText("No.");
+
+        jLabel18.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel18.setText("College Code");
+
+        ccode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ccodeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
         jPanel14.setLayout(jPanel14Layout);
@@ -298,20 +313,25 @@ public void showAllCRecord() {
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel14Layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel14Layout.createSequentialGroup()
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(ccode))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
                         .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(cno))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel14Layout.createSequentialGroup()
+                    .addGroup(jPanel14Layout.createSequentialGroup()
                         .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(loc, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                            .addComponent(cphone)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel14Layout.createSequentialGroup()
+                            .addComponent(cphone))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel14Layout.createSequentialGroup()
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(cname, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)))
@@ -324,15 +344,19 @@ public void showAllCRecord() {
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cno, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(74, 74, 74)
+                .addGap(49, 49, 49)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cname, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(92, 92, 92)
+                .addGap(54, 54, 54)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ccode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(57, 57, 57)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loc, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(86, 86, 86)
+                .addGap(62, 62, 62)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cphone, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -626,6 +650,11 @@ public void showAllCRecord() {
                 aidActionPerformed(evt);
             }
         });
+        aid.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                aidKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -729,7 +758,7 @@ public void showAllCRecord() {
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(aaid, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                 .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(64, 64, 64)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -842,9 +871,9 @@ public void showAllCRecord() {
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(67, 67, 67)
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70)
+                .addGap(90, 90, 90)
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(66, 66, 66)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -997,18 +1026,6 @@ public void showAllCRecord() {
             }
         });
 
-        jLabel9.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("College Name");
-
-        clg.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        clg.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select-College", "Shri Madhwa Vadiraja Institute of Technology and Management,Bantakal", "Acharya Institute of Technology, Bangalore", "Sahyadri College of Engineering and Management, Mangalore", "R.V. College of Engineering, Bangalore", "Siddaganga Institute of Technology, Tumkur", " " }));
-        clg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clgActionPerformed(evt);
-            }
-        });
-
         jLabel10.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Department");
@@ -1039,6 +1056,11 @@ public void showAllCRecord() {
                 tcidActionPerformed(evt);
             }
         });
+        tcid.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tcidKeyTyped(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
@@ -1057,7 +1079,6 @@ public void showAllCRecord() {
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1065,7 +1086,6 @@ public void showAllCRecord() {
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(tdept, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(clg, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(tphone, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(temail, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tname, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1079,23 +1099,19 @@ public void showAllCRecord() {
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tcid, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(32, 32, 32)
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tname, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(29, 29, 29)
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(temail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clg, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tdept, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(29, 29, 29)
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tphone, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1139,6 +1155,11 @@ public void showAllCRecord() {
         jButton9.setBackground(new java.awt.Color(51, 153, 255));
         jButton9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton9.setText("Refresh");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel27Layout = new javax.swing.GroupLayout(jPanel27);
         jPanel27.setLayout(jPanel27Layout);
@@ -1148,7 +1169,7 @@ public void showAllCRecord() {
                 .addContainerGap()
                 .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tid, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(64, 64, 64)
@@ -1159,23 +1180,24 @@ public void showAllCRecord() {
             jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel27Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton25, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE))
+                .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton25, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                    .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tid, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
         jPanel28.setBackground(new java.awt.Color(102, 255, 102));
         jPanel28.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 255, 255), 4, true));
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        ttable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Teacher ID", "Name", "Email", "College", "Department", "Phone No"
+                "Teacher ID", "Teacher Name", "Email", "Department", "Phone No", "Image Path"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1186,12 +1208,12 @@ public void showAllCRecord() {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable3);
-        if (jTable3.getColumnModel().getColumnCount() > 0) {
-            jTable3.getColumnModel().getColumn(0).setHeaderValue("Teacher ID");
-            jTable3.getColumnModel().getColumn(1).setHeaderValue("Name");
-            jTable3.getColumnModel().getColumn(2).setHeaderValue("Email");
-        }
+        ttable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ttableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(ttable);
 
         javax.swing.GroupLayout jPanel28Layout = new javax.swing.GroupLayout(jPanel28);
         jPanel28.setLayout(jPanel28Layout);
@@ -1367,6 +1389,8 @@ public void showAllCRecord() {
     public void init(){
         tvc();
         tva();
+        tvt();
+        cno.setText(String.valueOf(clg.getMax()));
     }
     private void tvc(){
         model1=(DefaultTableModel) ctable.getModel();
@@ -1379,15 +1403,24 @@ public void showAllCRecord() {
     private void clearc(){
         cname.setText(null);
         loc.setText(null);
+        ccode.setText(null);
         cphone.setText(null);
     }
     
     private void tva(){
         model1=(DefaultTableModel) atable.getModel();
-        ctable.setRowHeight(30);
-        ctable.setShowGrid(true);
-        ctable.setGridColor(Color.black);
-        ctable.setBackground(Color.white);
+        atable.setRowHeight(30);
+        atable.setShowGrid(true);
+        atable.setGridColor(Color.black);
+        atable.setBackground(Color.white);
+        
+    }
+    private void tvt(){
+        model1=(DefaultTableModel) ttable.getModel();
+        ttable.setRowHeight(30);
+        ttable.setShowGrid(true);
+        ttable.setGridColor(Color.black);
+        ttable.setBackground(Color.white);
         
     }
     private void cleara(){
@@ -1395,6 +1428,15 @@ public void showAllCRecord() {
         aname.setText(null);
         amail.setText(null);
         aphone.setText(null);
+        aclg.setSelectedIndex(0);
+    }
+    private void cleart(){
+        tcid.setText(null);
+        tname.setText(null);
+        temail.setText(null);
+        tdept.setText(null);
+        tphone.setText(null);
+        img2.setIcon(null);
     }
     private void anameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anameActionPerformed
         // TODO add your handling code here:
@@ -1452,7 +1494,7 @@ public void showAllCRecord() {
                 showAllARecord();
 
     } else {
-        JOptionPane.showMessageDialog(null, "No data found for the provided ID");
+        JOptionPane.showMessageDialog(null, "Cannot change Admin ID");
     }
 } catch (NumberFormatException ex) {
     JOptionPane.showMessageDialog(null, "Invalid admin ID. Please enter a valid number.");
@@ -1465,8 +1507,7 @@ public void showAllCRecord() {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        int yn= JOptionPane.showConfirmDialog(null,"All of student data will be deleted","Select",JOptionPane.OK_CANCEL_OPTION,0);
-        if(yn==JOptionPane.OK_OPTION){
+        
         try {
     // Prepare the SQL query with PreparedStatement
     String deleteSql = "DELETE FROM admin WHERE id = ?";
@@ -1486,28 +1527,29 @@ public void showAllCRecord() {
 } catch (Exception e) {
     JOptionPane.showMessageDialog(null, e);
 }
-        }
+        
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void upActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upActionPerformed
         // TODO add your handling code here:
         try {
     // Prepare the SQL query with PreparedStatement
-    String sql = "UPDATE college SET location=?, clgname=?,phone=? WHERE clgid=?";
+    String sql = "UPDATE college SET location=?,clgcode=?, clgname=?,phone=? WHERE clgid=? ";
     PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
     // Assuming cid, cname, and loc are JTextFields for entering college ID, name, and location respectively
-    int id = Integer.parseInt(cid.getText());
+    int id = Integer.parseInt(cno.getText());
     String name = cname.getText();
     String loca = loc.getText();
     String ph = cphone.getText();
+    String clgcode = ccode.getText();
 
     // Set parameters for the PreparedStatement
     preparedStatement.setString(1, loca);
-    preparedStatement.setString(2, name);
-    preparedStatement.setString(3, ph);
-    preparedStatement.setInt(4, id);
-    
+    preparedStatement.setString(2, clgcode);    
+    preparedStatement.setString(3, name);
+    preparedStatement.setString(4, ph);
+    preparedStatement.setInt(5, id);
 
     // Execute the query
     preparedStatement.executeUpdate();
@@ -1549,14 +1591,92 @@ public void showAllCRecord() {
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
         // TODO add your handling code here:
+   int clgid = 0;
+       clgid=LOGIN.CollegeIDHolder.getTeacherCollegeID();
+    // Validate compulsory input
+    String name = tname.getText();
+    String mail = temail.getText();
+    String branch = tdept.getText();
+    String phone = tphone.getText();
+    String password = temail.getText(); 
+    if (name.isEmpty() || mail.isEmpty() || branch.isEmpty() ||clgid==0|| phone.isEmpty() || password.isEmpty()||imagePath==null) {
+        JOptionPane.showMessageDialog(null, "All fields are required", "Error", JOptionPane.ERROR_MESSAGE);
+    } else if (!mail.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,4}$")) {
+        JOptionPane.showMessageDialog(null, "Invalid email format");
+    }  else {
+        String checkDuplicateSql = "SELECT COUNT(*) FROM student WHERE mail = ?";
+        try (PreparedStatement checkStatement = conn.prepareStatement(checkDuplicateSql)) {
+            checkStatement.setString(1, mail);
+            ResultSet resultSet = checkStatement.executeQuery();
+            resultSet.next();
+            int count = resultSet.getInt(1);
+            if (count > 0) {
+                JOptionPane.showMessageDialog(null, "Email already exists");
+                return; // Exit the method, no need to proceed with insertion
+            }
+                        String hashedPassword = pHash(password);
+
+    if (name.isEmpty() || mail.isEmpty() || branch.isEmpty() || phone.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "All fields are required", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Prepare the SQL query with PreparedStatement
+    String sql = "UPDATE teacher SET clgid=?, password=?, mail=?, name=?, branch=?, phone=?,ipath=? WHERE id=?";
+    try (PreparedStatement updateStatement = conn.prepareStatement(sql)) {
+        // Assuming tid is a JTextField for entering teacher ID
+        int id = Integer.parseInt(tid.getText());
+
+                updateStatement.setInt(1, clgid);
+                updateStatement.setString(2, hashedPassword);
+                updateStatement.setString(3, mail);
+                updateStatement.setString(4, name);
+                updateStatement.setString(5, branch);
+                updateStatement.setString(6, phone);
+                updateStatement.setString(7, imagePath);
+                updateStatement.setInt(8, id);
+
+        // Use executeUpdate() for UPDATE statements
+        int rowsAffected = updateStatement.executeUpdate();
+
+        if (rowsAffected > 0) {
+            JOptionPane.showMessageDialog(null, "Data is successfully updated");
+        } else {
+            JOptionPane.showMessageDialog(null, "Update failed");
+        }
+    }
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(null, "Invalid teacher ID", "Error", JOptionPane.ERROR_MESSAGE);
+} catch (SQLException e) {
+// Handle SQL exceptions
+                JOptionPane.showMessageDialog(null, "SQL Exception: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+} catch (Exception e) {
+// Handle other exceptions
+                JOptionPane.showMessageDialog(null, "Exception: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+}
+    }
     }//GEN-LAST:event_jButton21ActionPerformed
 
     private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
         // TODO add your handling code here:
+        int yn= JOptionPane.showConfirmDialog(null,"All of Teacher data will be deleted","Select",JOptionPane.OK_CANCEL_OPTION,0);
+        if(yn==JOptionPane.OK_OPTION){
+        try {
+    int id = Integer.parseInt(tid.getText());
+    String deleteSql = "DELETE FROM TEACHER WHERE id=?";
+    PreparedStatement deleteStatement = conn.prepareStatement(deleteSql);
+    deleteStatement.setInt(1, id);
+    deleteStatement.executeUpdate();
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(null, e);
+}
+        }
     }//GEN-LAST:event_jButton22ActionPerformed
 
     private void jButton24ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton24ActionPerformed
         // TODO add your handling code here:
+        cleart();
+        showAllTRecord();
     }//GEN-LAST:event_jButton24ActionPerformed
 
     private void locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locActionPerformed
@@ -1588,19 +1708,18 @@ public void showAllCRecord() {
         // TODO add your handling code here:
     }//GEN-LAST:event_tphoneActionPerformed
 
-    private void clgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clgActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_clgActionPerformed
-
     private void tcidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tcidActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_tcidActionPerformed
 
     private void jButton23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton23ActionPerformed
         // TODO add your handling code here:
         int a= JOptionPane.showConfirmDialog(this,"Do you want to logout now?","Select",JOptionPane.YES_NO_OPTION);
        if(a==0){
-           this.dispose();
+          setVisible(false);
+        LOGIN object =new LOGIN();
+        object.setVisible(true);
        }
     }//GEN-LAST:event_jButton23ActionPerformed
 
@@ -1608,15 +1727,18 @@ public void showAllCRecord() {
         // TODO add your handling code here:
         int a= JOptionPane.showConfirmDialog(this,"Do you want to logout now?","Select",JOptionPane.YES_NO_OPTION);
         if(a==0){
-            this.dispose();
-        }
+        setVisible(false);      
+        LOGIN object =new LOGIN();
+        object.setVisible(true);        }
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
         int a= JOptionPane.showConfirmDialog(this,"Do you want to logout now?","Select",JOptionPane.YES_NO_OPTION);
         if(a==0){
-            this.dispose();
+            setVisible(false);
+        LOGIN object =new LOGIN();
+        object.setVisible(true);
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 
@@ -1641,7 +1763,7 @@ public void showAllCRecord() {
     }
 
     // Prepare the SQL query with PreparedStatement for insertion
-    String sql = "INSERT INTO college (clgname, location, phone,clgid) VALUES ( ?, ?, ?, ?)";
+    String sql = "INSERT INTO college (clgname, location, phone,clgid,clgcode) VALUES ( ?, ?, ?, ?,?)";
     PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
     // Set parameters for the PreparedStatement
@@ -1650,6 +1772,7 @@ public void showAllCRecord() {
     preparedStatement.setString(2, loc.getText());
     preparedStatement.setString(3, cphone.getText());
     preparedStatement.setString(4, cno.getText());
+    preparedStatement.setString(5, ccode.getText());
 
     // Execute the insertion query
     preparedStatement.executeUpdate();
@@ -1684,9 +1807,11 @@ public void showAllCRecord() {
 
     if (rs.next()) {
         // Assuming cname and loc are JTextFields for displaying college name and location respectively
+        cno.setText(rs.getString("clgid"));
         cname.setText(rs.getString("clgname"));
         loc.setText(rs.getString("location"));
         cphone.setText(rs.getString("phone"));
+        ccode.setText(rs.getString("clgcode"));
         
     } else {
         JOptionPane.showMessageDialog(null, "Record Not Found");
@@ -1784,9 +1909,102 @@ public void showAllARecord() {
     JOptionPane.showMessageDialog(null, e);
 }
     }//GEN-LAST:event_jButton13ActionPerformed
+public void showAllTRecord() {
+    try {
+        int clgid = LOGIN.CollegeIDHolder.getTeacherCollegeID();
+        String sql = "SELECT id, name, mail, branch, phone, ipath FROM teacher WHERE clgid=?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, clgid);
+        ResultSet res = preparedStatement.executeQuery(); // Remove sql parameter here
 
+        // Define column names for your table model
+        String[] columnNames = {"Teacher ID", "Teacher Name", "Email", "Department", "Phone No", "Image Path"};
+
+        // Create an empty table model with the defined column names
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        // Populate the table model with the query result
+        while (res.next()) {
+            Object[] row = {res.getInt("id"), res.getString("name"), res.getString("mail"), res.getString("branch"), res.getString("phone"), res.getString("ipath")};
+            model.addRow(row);
+        }
+
+        // Set the table model to the table
+        ttable.setModel(model);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+
+public void showTRecord(int id){
+      try {
+          int clgid = 0;
+    clgid=LOGIN.CollegeIDHolder.getTeacherCollegeID();
+    // Prepare the SQL query with PreparedStatement
+    String sql = "SELECT id,name,mail,branch,phone,ipath FROM teacher WHERE id=? AND clgid=?";
+    PreparedStatement preparedStatement = conn.prepareStatement(sql);
+    preparedStatement.setInt(1, id);
+    preparedStatement.setInt(2, clgid);
+
+    // Execute the query
+    ResultSet res = preparedStatement.executeQuery();
+
+    // Define column names for your table model
+    String[] columnNames = {"Teacher ID", "Teacher Name","Email","Department","Phone No","Image Path"};
+
+    // Create an empty table model with the defined column names
+    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+    // Populate the table model with the query result
+    while (res.next()) {
+        Object[] row = {res.getInt("id"),res.getString("name"),res.getString("mail"),res.getString("branch"),res.getString("phone"),res.getString("ipath") };
+        model.addRow(row);
+    }
+
+    // Set the table model to the table
+    ttable.setModel(model);
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(null, e);
+}
+}
     private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
         // TODO add your handling code here:
+         try {
+              if(tid.getText().isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Enter Teacher ID No.");
+                        return;
+            }
+               int clgid = 0;
+    clgid=LOGIN.CollegeIDHolder.getTeacherCollegeID();
+    // Prepare and execute the SQL query with PreparedStatement
+    String sql = "SELECT * FROM TEACHER WHERE id=? AND clgid=?";
+    PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+    // Assuming tid is a JTextField for entering teacher ID
+    int id = Integer.parseInt(tid.getText());
+    preparedStatement.setInt(1, id);
+        preparedStatement.setInt(2, clgid);
+    showTRecord(id);
+    // Execute the query
+    ResultSet trs = preparedStatement.executeQuery();
+
+    // Process the result set
+    if (trs.next()) {
+        int aaaid = trs.getInt("id");
+        tcid.setText(Integer.toString(aaaid));     
+        tname.setText(trs.getString("name"));
+        temail.setText(trs.getString("mail"));
+        tdept.setText(trs.getString("branch"));
+        tphone.setText(trs.getString("phone"));
+        String path=trs.getString("ipath");
+        imagePath=path;
+        img2.setIcon(imageAdjust(path,null));
+    } else {
+        JOptionPane.showMessageDialog(null, "Record Not Found");
+    }
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(null, e);
+}
     }//GEN-LAST:event_jButton25ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
@@ -1879,23 +2097,9 @@ public void showAllARecord() {
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
         // TODO add your handling code here:
-        imagePath=null;
+       
          int clgid = 0;
-    try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT clgid FROM college WHERE clgname=?")) {
-        String clgnm = (String) clg.getSelectedItem();
-        preparedStatement.setString(1, clgnm);
-
-        try (ResultSet res = preparedStatement.executeQuery()) {
-            if (res.next()) {
-                clgid = res.getInt("clgid");
-            } else {
-                JOptionPane.showMessageDialog(null, "College not found");
-                return;
-            }
-        }
-    }   catch (SQLException ex) {
-            Logger.getLogger(AHOME.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    clgid=LOGIN.CollegeIDHolder.getTeacherCollegeID();
 
     // Insert Teacher Information
     String name = tname.getText();
@@ -1903,13 +2107,25 @@ public void showAllARecord() {
     String branch = tdept.getText();
     String phone = tphone.getText();
     String password = temail.getText(); 
-    if (name.isEmpty() || mail.isEmpty() || branch.isEmpty() || phone.isEmpty() || password.isEmpty()) {
+    if (name.isEmpty() || mail.isEmpty() || branch.isEmpty() || phone.isEmpty() || password.isEmpty()||imagePath==null) {
         JOptionPane.showMessageDialog(null, "All fields are required", "Error", JOptionPane.ERROR_MESSAGE);
-    } else {
-        try {
+    } else if (!mail.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,4}$")) {
+        JOptionPane.showMessageDialog(null, "Invalid email format");
+    }  else {
+        String checkDuplicateSql = "SELECT COUNT(*) FROM teacher WHERE mail = ?";
+        try (PreparedStatement checkStatement = conn.prepareStatement(checkDuplicateSql)) {
+            checkStatement.setString(1, mail);
+            ResultSet resultSet = checkStatement.executeQuery();
+            resultSet.next();
+            int count = resultSet.getInt(1);
+            if (count > 0) {
+                JOptionPane.showMessageDialog(null, "Email already exists");
+                return; // Exit the method, no need to proceed with insertion
+            }
+        
                         String hashedPassword = pHash(password);
 
-            String sql = "INSERT INTO teacher(clgid, password, mail, name, branch, phone) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO teacher(clgid, password, mail, name, branch, phone,ipath) VALUES (?, ?, ?, ?, ?, ?,?)";
             try (PreparedStatement insertStatement = conn.prepareStatement(sql)) {
                 insertStatement.setInt(1, clgid);
                 insertStatement.setString(2, hashedPassword);
@@ -1917,7 +2133,8 @@ public void showAllARecord() {
                 insertStatement.setString(4, name);
                 insertStatement.setString(5, branch);
                 insertStatement.setString(6, phone);
-
+                insertStatement.setString(7, imagePath);
+               
                 // Use executeUpdate() for INSERT statements
                 int rowsAffected = insertStatement.executeUpdate();
 
@@ -1950,6 +2167,7 @@ public static String pHash(String password) {
 }
     private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
         // TODO add your handling code here:
+         imagePath=null;
         JFileChooser f= new JFileChooser();
         f.setCurrentDirectory(new File(System.getProperty("user.home")));
         FileNameExtensionFilter fil = new FileNameExtensionFilter("*.image","jpg","gif","png");
@@ -1975,10 +2193,7 @@ public static String pHash(String password) {
         aid.setText(model1.getValueAt(rowIndex,0).toString());
         aname.setText(model1.getValueAt(rowIndex,1).toString());
         amail.setText(model1.getValueAt(rowIndex,2).toString());
-        String clg = model1.getValueAt(rowIndex,3).toString();
-//        if(){
-//            
-//        }
+        
         aphone.setText(model1.getValueAt(rowIndex,4).toString());
         
     }//GEN-LAST:event_atableMouseClicked
@@ -1989,8 +2204,9 @@ public static String pHash(String password) {
         rowIndex = ctable.getSelectedRow();
         cno.setText(model1.getValueAt(rowIndex,0).toString());
         cname.setText(model1.getValueAt(rowIndex,1).toString());
-        loc.setText(model1.getValueAt(rowIndex,2).toString());        
-        cphone.setText(model1.getValueAt(rowIndex,3).toString());
+        ccode.setText(model1.getValueAt(rowIndex,2).toString());                
+        loc.setText(model1.getValueAt(rowIndex,3).toString());   
+        cphone.setText(model1.getValueAt(rowIndex,4).toString());
     }//GEN-LAST:event_ctableMouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -1998,6 +2214,51 @@ public static String pHash(String password) {
                 aaid.setText(null);
 
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void tcidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tcidKeyTyped
+        // TODO add your handling code here:
+         if(!Character.isDigit(evt.getKeyChar())){
+            evt.consume();
+            
+        }
+    }//GEN-LAST:event_tcidKeyTyped
+
+    private void aidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_aidKeyTyped
+        // TODO add your handling code here:
+         if(!Character.isDigit(evt.getKeyChar())){
+            evt.consume();
+            
+        }
+    }//GEN-LAST:event_aidKeyTyped
+
+    private void cnoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cnoKeyTyped
+        // TODO add your handling code here:
+         if(!Character.isDigit(evt.getKeyChar())){
+            evt.consume();
+            
+        }
+    }//GEN-LAST:event_cnoKeyTyped
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+        tid.setText(null);
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void ttableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ttableMouseClicked
+        // TODO add your handling code here:
+        model1=(DefaultTableModel) ttable.getModel();
+        rowIndex = ttable.getSelectedRow();
+        tcid.setText(model1.getValueAt(rowIndex,0).toString());
+        tname.setText(model1.getValueAt(rowIndex,1).toString());
+        temail.setText(model1.getValueAt(rowIndex,2).toString());
+        tdept.setText(model1.getValueAt(rowIndex,3).toString());
+        tphone.setText(model1.getValueAt(rowIndex,4).toString());
+        
+    }//GEN-LAST:event_ttableMouseClicked
+
+    private void ccodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ccodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ccodeActionPerformed
 private ImageIcon imageAdjust(String path,byte[] pic){
     ImageIcon myImg =null;
     if(path != null){
@@ -2011,6 +2272,7 @@ private ImageIcon imageAdjust(String path,byte[] pic){
     ImageIcon icon = new ImageIcon(newImg);
     return icon;
 }
+    
     
     /**
      * @param args the command line arguments
@@ -2044,6 +2306,7 @@ private ImageIcon imageAdjust(String path,byte[] pic){
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new AHOME().setVisible(true);
+                
             }
         });
     }
@@ -2056,8 +2319,8 @@ private ImageIcon imageAdjust(String path,byte[] pic){
     private javax.swing.JTextField aname;
     private javax.swing.JTextField aphone;
     private javax.swing.JTable atable;
+    private javax.swing.JTextField ccode;
     private javax.swing.JTextField cid;
-    private javax.swing.JComboBox<String> clg;
     private javax.swing.JTextField cname;
     private javax.swing.JTextField cno;
     private javax.swing.JTextField cphone;
@@ -2093,6 +2356,7 @@ private ImageIcon imageAdjust(String path,byte[] pic){
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel25;
@@ -2103,7 +2367,6 @@ private ImageIcon imageAdjust(String path,byte[] pic){
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -2133,14 +2396,14 @@ private ImageIcon imageAdjust(String path,byte[] pic){
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField loc;
     private javax.swing.JTextField tcid;
     private javax.swing.JTextField tdept;
     private javax.swing.JTextField temail;
+    private javax.swing.JTextField tid;
     private javax.swing.JTextField tname;
     private javax.swing.JTextField tphone;
+    private javax.swing.JTable ttable;
     private javax.swing.JButton up;
     // End of variables declaration//GEN-END:variables
 }

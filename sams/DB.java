@@ -13,7 +13,7 @@ public class DB {
  final static String JDBC_DRIVER="com.mysql.cj.jdbc.Driver";
     final static String DB_URL="jdbc:mysql://localhost:3306/management";
     final static String USER="root";
-    final static String PASS="";
+    final static String PASS="toor";
     public static Connection Connection(){
         try{
            Class.forName(JDBC_DRIVER);

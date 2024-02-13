@@ -2,17 +2,15 @@
 package sams;
 
 import java.awt.HeadlessException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
-
-/**
- *
- * @author Suja
- */
 public class LOGIN extends javax.swing.JFrame {
 public class CollegeIDHolder {
     private static int teacherCollegeID;
@@ -36,9 +34,6 @@ public class TeacherIDHolder {
         teacherID = tID;
     }
 }
-    /**
-     * Creates new form LOGIN
-     */
 Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -80,6 +75,11 @@ Connection conn = null;
         jTextField1.setForeground(new java.awt.Color(255, 255, 255));
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField1.setText("LOGIN");
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField1KeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -207,18 +207,33 @@ Connection conn = null;
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+public static String pHash(String password) {
+    try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(password.getBytes(StandardCharsets.UTF_8));
+        byte[] hashedBytes = md.digest();
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashedBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException("Error hashing password", e);
+    }
+}
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
          
 int teacherCollegeID = 0;
 int teacherID = 0;
-
+String adminCollege = null;
+int adminCollegeID = 0;
+int adminID = 0;
 
 try {
     stmt = conn.createStatement();
     String userEmail = email.getText();
-    String userPass = pass.getText();
-
+    String userPass = pHash(pass.getText());
     // First, check against the "admin" table
     String adminSql = "SELECT * FROM admin WHERE mail = ? AND password = ?";
     PreparedStatement adminPreparedStatement = conn.prepareStatement(adminSql);
@@ -226,11 +241,29 @@ try {
     adminPreparedStatement.setString(2, userPass);
 
     ResultSet adminResultSet = adminPreparedStatement.executeQuery();
-
     if (adminResultSet.next()) {
+        try{
+        adminID = adminResultSet.getInt("id"); 
+            TeacherIDHolder.setTeacherID(adminID);
+            adminCollege = adminResultSet.getString("college");
+            String acSql = "SELECT * FROM college WHERE clgname = ? ";
+            PreparedStatement pstm = conn.prepareStatement(acSql);
+            pstm.setString(1, adminCollege);
+        ResultSet adminC = pstm.executeQuery(); 
+        if(adminC.next()){
+            adminCollegeID = adminC.getInt("clgid");
+            CollegeIDHolder.setTeacherCollegeID(adminCollegeID); 
+        }
+        else{
+           JOptionPane.showMessageDialog(null, "College Id Not Found");
+        }
+        }catch(Exception e){
+                            JOptionPane.showMessageDialog(null, e);
+
+        }
         // Login successful for admin
         setVisible(false);
-        AHOME object = new AHOME();
+        AHOME object = new AHOME();    
         object.setVisible(true);
     } else {
         // If not found in the admin table, check against the "teacher" table
@@ -243,15 +276,14 @@ try {
 
         if (teacherResultSet.next()) {
             // Login successful for teacher
-            teacherID = teacherResultSet.getInt("id"); // Assuming the column name is clgid
+            teacherID = teacherResultSet.getInt("id"); 
             TeacherIDHolder.setTeacherID(teacherID);
-            teacherCollegeID = teacherResultSet.getInt("clgid"); // Assuming the column name is clgid
-            CollegeIDHolder.setTeacherCollegeID(teacherCollegeID); // Store the value in the CollegeIDHolder class
+            teacherCollegeID = teacherResultSet.getInt("clgid"); 
+            CollegeIDHolder.setTeacherCollegeID(teacherCollegeID); 
             setVisible(false);
             thome object = new thome();
             object.setVisible(true);
         } else {
-            // If not found in the teacher table, check against the "student" table
             String studentSql = "SELECT * FROM student WHERE stdmail = ? AND stdpassword = ?";
             PreparedStatement studentPreparedStatement = conn.prepareStatement(studentSql);
             studentPreparedStatement.setString(1, userEmail);
@@ -265,7 +297,6 @@ try {
                 thome object = new thome();
                 object.setVisible(true);
             } else {
-                // If not found in any table, show an error message
                 JOptionPane.showMessageDialog(null, "Email or Password is invalid");
             }
         }
@@ -299,6 +330,11 @@ try {
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
 
+    private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
+        // TODO add your handling code here:
+         jTextField1.setEditable(false);
+    }//GEN-LAST:event_jTextField1KeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -329,6 +365,7 @@ try {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
                 new LOGIN().setVisible(true);
             }
         });

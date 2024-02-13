@@ -3,9 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package sams;
-
+import java.text.SimpleDateFormat;
+import java.awt.Image;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Suja
@@ -15,8 +31,17 @@ public class thome extends javax.swing.JFrame {
     /**
      * Creates new form thome
      */
+     Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+        private DefaultTableModel model1;
+        private int rowIndex;
+        private String imagePath;
     public thome() {
+        super("student");
         initComponents();
+        conn = DB.Connection();
+        showAllSRecord();
     }
 
     /**
@@ -38,41 +63,39 @@ public class thome extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        tname = new javax.swing.JTextField();
-        email = new javax.swing.JTextField();
-        tphone = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        clg = new javax.swing.JComboBox<>();
+        sname = new javax.swing.JTextField();
+        semail = new javax.swing.JTextField();
+        sphone = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        tname1 = new javax.swing.JTextField();
+        sfname = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        tname2 = new javax.swing.JTextField();
+        smname = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jPanel34 = new javax.swing.JPanel();
         jButton27 = new javax.swing.JButton();
         jPanel35 = new javax.swing.JPanel();
-        img5 = new javax.swing.JLabel();
+        simg = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
-        tphone2 = new javax.swing.JTextField();
+        sbranch = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        tname4 = new javax.swing.JTextField();
+        usn = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        dob = new com.toedter.calendar.JDateChooser();
         jLabel12 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        gen = new javax.swing.JComboBox<>();
         jLabel56 = new javax.swing.JLabel();
-        clg5 = new javax.swing.JComboBox<>();
+        sem = new javax.swing.JComboBox<>();
         jLabel57 = new javax.swing.JLabel();
-        clg6 = new javax.swing.JComboBox<>();
+        sec = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        susn = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jPanel10 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        stable = new javax.swing.JTable();
         jPanel11 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -204,38 +227,36 @@ public class thome extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Phone No");
 
-        tname.addActionListener(new java.awt.event.ActionListener() {
+        sname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tnameActionPerformed(evt);
+                snameActionPerformed(evt);
             }
         });
 
-        email.addActionListener(new java.awt.event.ActionListener() {
+        semail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emailActionPerformed(evt);
+                semailActionPerformed(evt);
             }
         });
 
-        tphone.addActionListener(new java.awt.event.ActionListener() {
+        sphone.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tphoneActionPerformed(evt);
+                sphoneActionPerformed(evt);
             }
         });
-
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("College Name");
-
-        clg.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        clg.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select-College", "Shri Madhwa Vadiraja Institute of Technology and Management,Bantakal", "Acharya Institute of Technology, Bangalore", "Sahyadri College of Engineering and Management, Mangalore", "R.V. College of Engineering, Bangalore", "Siddaganga Institute of Technology, Tumkur", " " }));
+        sphone.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                sphoneKeyTyped(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Father's Name");
 
-        tname1.addActionListener(new java.awt.event.ActionListener() {
+        sfname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tname1ActionPerformed(evt);
+                sfnameActionPerformed(evt);
             }
         });
 
@@ -243,9 +264,9 @@ public class thome extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Mother's Name");
 
-        tname2.addActionListener(new java.awt.event.ActionListener() {
+        smname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tname2ActionPerformed(evt);
+                smnameActionPerformed(evt);
             }
         });
 
@@ -259,6 +280,11 @@ public class thome extends javax.swing.JFrame {
         jButton27.setBackground(new java.awt.Color(51, 153, 255));
         jButton27.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton27.setText("Browse");
+        jButton27.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton27ActionPerformed(evt);
+            }
+        });
 
         jPanel35.setBackground(new java.awt.Color(204, 204, 204));
         jPanel35.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 255, 255), 4, true));
@@ -267,11 +293,11 @@ public class thome extends javax.swing.JFrame {
         jPanel35.setLayout(jPanel35Layout);
         jPanel35Layout.setHorizontalGroup(
             jPanel35Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(img5, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+            .addComponent(simg, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
         );
         jPanel35Layout.setVerticalGroup(
             jPanel35Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(img5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(simg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
@@ -308,9 +334,9 @@ public class thome extends javax.swing.JFrame {
                         .addContainerGap())))
         );
 
-        tphone2.addActionListener(new java.awt.event.ActionListener() {
+        sbranch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tphone2ActionPerformed(evt);
+                sbranchActionPerformed(evt);
             }
         });
 
@@ -318,9 +344,9 @@ public class thome extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
         jLabel11.setText("Branch");
 
-        tname4.addActionListener(new java.awt.event.ActionListener() {
+        usn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tname4ActionPerformed(evt);
+                usnActionPerformed(evt);
             }
         });
 
@@ -332,21 +358,21 @@ public class thome extends javax.swing.JFrame {
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setText("Gender");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "M", "F" }));
+        gen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Male", "Female" }));
 
         jLabel56.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel56.setForeground(new java.awt.Color(255, 255, 255));
         jLabel56.setText("Semester");
 
-        clg5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        clg5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select-Semester", "1", "2", "3", "4", "5", "6", "7", "8", " " }));
+        sem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        sem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select-Semester", "1", "2", "3", "4", "5", "6", "7", "8", " " }));
 
         jLabel57.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel57.setForeground(new java.awt.Color(255, 255, 255));
         jLabel57.setText("Section");
 
-        clg6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        clg6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select-Section", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K" }));
+        sec.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        sec.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select-Section", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K" }));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -356,42 +382,40 @@ public class thome extends javax.swing.JFrame {
                 .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel57, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel56, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(sphone, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel6Layout.createSequentialGroup()
+                            .addComponent(jLabel57, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(sec, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel6Layout.createSequentialGroup()
+                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel6Layout.createSequentialGroup()
+                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(gen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel56, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(clg6, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(clg5, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(tphone, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(tphone2)
-                            .addComponent(email)
-                            .addComponent(clg, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tname)
-                            .addComponent(tname1)
-                            .addComponent(tname2)
-                            .addComponent(tname4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                    .addComponent(jLabel9)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(dob, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(sbranch)
+                                .addComponent(semail)
+                                .addComponent(sname)
+                                .addComponent(sfname)
+                                .addComponent(smname)
+                                .addComponent(usn, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                                .addComponent(sem, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addGap(22, 22, 22))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
@@ -404,51 +428,48 @@ public class thome extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tname4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(usn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tname, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                    .addComponent(sname, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tname1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sfname, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tname2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(smname, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(gen, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(dob, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(semail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clg, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tphone2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sbranch, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel56, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clg5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(sem, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel57, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clg6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(sec, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tphone, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(sphone, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel34, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -474,13 +495,29 @@ public class thome extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Search Student");
 
+        susn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                susnActionPerformed(evt);
+            }
+        });
+
         jButton2.setBackground(new java.awt.Color(51, 204, 255));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setText("Search");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(51, 204, 255));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton3.setText("Refresh");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -490,7 +527,7 @@ public class thome extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(susn, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
@@ -503,7 +540,7 @@ public class thome extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(susn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -512,33 +549,28 @@ public class thome extends javax.swing.JFrame {
         jPanel10.setBackground(new java.awt.Color(102, 255, 102));
         jPanel10.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 255, 255), 4, true));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        stable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "USN", "Name", "Father's Name", "Mother's Name", "Gender", "D.O.B", "Email", "College", "Branch", "Phone No"
+                "USN", "Name", "Father's Name", "Mother's Name", "Gender", "D.O.B", "Email", "Branch", "Semester", "Section", "Phone No", "Image Path"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(2).setHeaderValue("Father's Name");
-            jTable1.getColumnModel().getColumn(3).setHeaderValue("Mother's Name");
-            jTable1.getColumnModel().getColumn(4).setHeaderValue("Gender");
-            jTable1.getColumnModel().getColumn(5).setHeaderValue("D.O.B");
-            jTable1.getColumnModel().getColumn(6).setHeaderValue("Email");
-            jTable1.getColumnModel().getColumn(7).setHeaderValue("College");
-            jTable1.getColumnModel().getColumn(8).setHeaderValue("Branch");
-            jTable1.getColumnModel().getColumn(9).setHeaderValue("Phone No");
-        }
+        stable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                stableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(stable);
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -557,6 +589,11 @@ public class thome extends javax.swing.JFrame {
         jButton4.setBackground(new java.awt.Color(51, 153, 255));
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jButton4.setText("Add New");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setBackground(new java.awt.Color(51, 153, 255));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
@@ -1039,8 +1076,7 @@ public class thome extends javax.swing.JFrame {
                                         .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jButton11, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
                                         .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(tname6)
@@ -1540,43 +1576,133 @@ public class thome extends javax.swing.JFrame {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        clears();
+         showAllSRecord();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        int yn= JOptionPane.showConfirmDialog(null,"All of Student data will be deleted","Select",JOptionPane.OK_CANCEL_OPTION,0);
+        if(yn==JOptionPane.OK_OPTION){
+        try {
+    String id = susn.getText();
+    String deleteSql = "DELETE FROM student WHERE USN=?";
+    PreparedStatement deleteStatement = conn.prepareStatement(deleteSql);
+    deleteStatement.setString(1, id);
+    deleteStatement.executeUpdate();
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(null, e);
+}
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        if(isEmpty()){
+       
+           int teacherCollegeID = LOGIN.CollegeIDHolder.getTeacherCollegeID();
+           String collegeIDAsString = String.valueOf(teacherCollegeID);
+    String name = sname.getText();
+    String usnx = usn.getText();
+    String mail = semail.getText();
+    String gender = (String) gen.getSelectedItem();
+    String stbranch =  sbranch.getText();
+    String phone = sphone.getText();
+    String section = (String) sec.getSelectedItem();
+    String password = semail.getText();
+    String fname = sfname.getText();
+    String mname = smname.getText();
+    String stsem = (String) sem.getSelectedItem();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String date = dateFormat.format(dob.getDate());
+    
+String checkDuplicateSql = "SELECT COUNT(*) FROM student WHERE stdmail = ?";
+        try (PreparedStatement checkStatement = conn.prepareStatement(checkDuplicateSql)) {
+            checkStatement.setString(1, mail);
+            ResultSet resultSet = checkStatement.executeQuery();
+            resultSet.next();
+            int count = resultSet.getInt(1);
+            if (count > 0) {
+                JOptionPane.showMessageDialog(null, "Email already exists");
+                return; // Exit the method, no need to proceed with insertion
+            }
+    
+
+
+            // Hash the password using SHA-256
+            String hashedPassword = pHash(password);
+
+           
+
+            String sql = "UPDATE student SET clgid=?, stdmail=?, stdpassword=?, stdname=?,"
+                    + " stdbranch=?, sem=?, stdsection=?, father=?, mother=?, phone=?,USN=?,gender=?,dob=?,siPath=? WHERE USN=?" ;
+
+            try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+                String usny = susn.getText();
+                preparedStatement.setString(1, collegeIDAsString);
+                preparedStatement.setString(2, mail);
+                preparedStatement.setString(3, hashedPassword); // Use the hashed password
+                preparedStatement.setString(4, name);
+                preparedStatement.setString(5, stbranch);
+                preparedStatement.setString(6, stsem);
+                preparedStatement.setString(7, section);
+                preparedStatement.setString(8, fname);
+                preparedStatement.setString(9, mname);
+                preparedStatement.setString(10, phone);
+                preparedStatement.setString(11, usnx);
+                preparedStatement.setString(12, gender);
+                preparedStatement.setString(13, date);
+                preparedStatement.setString(14, imagePath);
+                preparedStatement.setString(15, usny);
+                
+                // Use executeUpdate() for INSERT statements
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(null, "Data is successfully updated");
+                    // Adjust this part based on your UI logic
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "Updation failed");
+                }
+            }
+        } catch (Exception e) {
+// Handle the exception appropriately
+                        JOptionPane.showMessageDialog(null, e);
+        }
+        }
+                                          
+
+        
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void tname4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tname4ActionPerformed
+    private void usnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tname4ActionPerformed
+    }//GEN-LAST:event_usnActionPerformed
 
-    private void tphone2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tphone2ActionPerformed
+    private void sbranchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sbranchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tphone2ActionPerformed
+    }//GEN-LAST:event_sbranchActionPerformed
 
-    private void tname2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tname2ActionPerformed
+    private void smnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_smnameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tname2ActionPerformed
+    }//GEN-LAST:event_smnameActionPerformed
 
-    private void tname1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tname1ActionPerformed
+    private void sfnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sfnameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tname1ActionPerformed
+    }//GEN-LAST:event_sfnameActionPerformed
 
-    private void tphoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tphoneActionPerformed
+    private void sphoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sphoneActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tphoneActionPerformed
+    }//GEN-LAST:event_sphoneActionPerformed
 
-    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
+    private void semailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_semailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_emailActionPerformed
+    }//GEN-LAST:event_semailActionPerformed
 
-    private void tnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tnameActionPerformed
+    private void snameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tnameActionPerformed
+    }//GEN-LAST:event_snameActionPerformed
 
     private void jButton34ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton34ActionPerformed
         // TODO add your handling code here:
@@ -1646,6 +1772,340 @@ public class thome extends javax.swing.JFrame {
        }
     }//GEN-LAST:event_jButton39ActionPerformed
 
+    private void susnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_susnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_susnActionPerformed
+public static String pHash(String password) {
+    try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(password.getBytes(StandardCharsets.UTF_8));
+        byte[] hashedBytes = md.digest();
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashedBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException("Error hashing password", e);
+    }
+}
+private void clears(){
+    sname.setText(null);
+    sfname.setText(null);
+    smname.setText(null);
+    semail.setText(null);
+    sbranch.setText(null);
+    usn.setText(null);
+    sphone.setText(null);
+   dob.setDate(null);
+    gen.setSelectedIndex(0);
+    sem.setSelectedIndex(0);
+    sec.setSelectedIndex(0);
+    simg.setIcon(null);
+    imagePath=null;
+}
+public boolean isEmpty(){
+    if(sname.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student Name is missing");
+        return false;
+    }
+    if(sfname.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student Father name is missing");
+        return false;
+    }
+    if(smname.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student Mother name is missing");
+        return false;
+    }
+    if(semail.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student Email is missing");
+        return false;
+    }
+    if (!semail.getText().matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,4}$")) {
+        JOptionPane.showMessageDialog(null, "Invalid email format");
+    
+    }
+    if(sbranch.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student Branch is missing");
+        return false;
+    }
+    if(usn.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student USN is missing");
+        return false;
+    }
+    if(sphone.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null, " Student Phone no. is missing");
+        return false;
+    }
+    if(sphone.getText().length()>=15){
+        JOptionPane.showMessageDialog(null, "  Phone no. is too long");
+        return false;
+    }
+   if(dob.getDate()==null){
+        JOptionPane.showMessageDialog(null, " Student date of Birth is missing");
+        return false;
+   }
+   if(dob.getDate().compareTo(new Date())>0){
+        JOptionPane.showMessageDialog(null, " Invalid date of Birth");
+        return false;
+   }
+   if(imagePath==null){
+        JOptionPane.showMessageDialog(null, "No Image selected");
+        return false;
+   }
+   return true;
+}
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        if(isEmpty()){
+       
+           int teacherCollegeID = LOGIN.CollegeIDHolder.getTeacherCollegeID();
+           String collegeIDAsString = String.valueOf(teacherCollegeID);
+    String name = sname.getText();
+    String usnx = usn.getText();
+    String mail = semail.getText();
+    String gender = (String) gen.getSelectedItem();
+    String stbranch =  sbranch.getText();
+    String phone = sphone.getText();
+    String section = (String) sec.getSelectedItem();
+    String password = semail.getText();
+    String fname = sfname.getText();
+    String mname = smname.getText();
+    String stsem = (String) sem.getSelectedItem();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String date = dateFormat.format(dob.getDate());
+    
+String checkDuplicateSql = "SELECT COUNT(*) FROM student WHERE mail = ?";
+        try (PreparedStatement checkStatement = conn.prepareStatement(checkDuplicateSql)) {
+            checkStatement.setString(1, mail);
+            ResultSet resultSet = checkStatement.executeQuery();
+            resultSet.next();
+            int count = resultSet.getInt(1);
+            if (count > 0) {
+                JOptionPane.showMessageDialog(null, "Email already exists");
+                return; // Exit the method, no need to proceed with insertion
+            }
+    
+
+
+            // Hash the password using SHA-256
+            String hashedPassword = pHash(password);
+
+            // Ensure that the 'conn' object is a valid and open database connection
+            // Example: Connection conn = YourDatabaseConnectionClass.getConnection();
+
+            String sql = "INSERT INTO student(clgid, stdmail, stdpassword, stdname,"
+                    + " stdbranch, sem, stdsection, father, mother, phone,USN,gender,dob,siPath) " +
+                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
+
+            try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.setString(1, collegeIDAsString);
+                preparedStatement.setString(2, mail);
+                preparedStatement.setString(3, hashedPassword); // Use the hashed password
+                preparedStatement.setString(4, name);
+                preparedStatement.setString(5, stbranch);
+                preparedStatement.setString(6, stsem);
+                preparedStatement.setString(7, section);
+                preparedStatement.setString(8, fname);
+                preparedStatement.setString(9, mname);
+                preparedStatement.setString(10, phone);
+                preparedStatement.setString(11, usnx);
+                preparedStatement.setString(12, gender);
+                preparedStatement.setString(13, date);
+                preparedStatement.setString(14, imagePath);
+
+                // Use executeUpdate() for INSERT statements
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(null, "Data is successfully inserted");
+                    // Adjust this part based on your UI logic
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "Insertion failed");
+                }
+            }
+        } catch (Exception e) {
+// Handle the exception appropriately
+                        JOptionPane.showMessageDialog(null, e);
+        }
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void sphoneKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sphoneKeyTyped
+        // TODO add your handling code here:
+        if(!Character.isDigit(evt.getKeyChar())){
+            evt.consume();
+            
+        }
+    }//GEN-LAST:event_sphoneKeyTyped
+
+    private void jButton27ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton27ActionPerformed
+        // TODO add your handling code here:
+         imagePath=null;
+        JFileChooser f= new JFileChooser();
+        f.setCurrentDirectory(new File(System.getProperty("user.home")));
+        FileNameExtensionFilter fil = new FileNameExtensionFilter("*.image","jpg","gif","png");
+        f.addChoosableFileFilter(fil);
+        int op=f.showSaveDialog(f);
+        if(op==JFileChooser.APPROVE_OPTION){
+            File sf=f.getSelectedFile();
+            String path = sf.getAbsolutePath();
+            simg.setIcon(imageAdjust(path,null));
+            imagePath = path;
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "No Image selected");
+        }
+                
+        
+    }//GEN-LAST:event_jButton27ActionPerformed
+public void showAllSRecord() {
+    try {
+        int clgid = LOGIN.CollegeIDHolder.getTeacherCollegeID();
+        String sql = "SELECT * FROM student WHERE clgid=?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, clgid);
+        ResultSet res = preparedStatement.executeQuery(); 
+
+        // Define column names for your table model
+        String[] columnNames = {"USN", "Student Name","Father Name","Mother Name","Gender","DOB", "Email", "Branch","Semester","Section", "Phone No", "Image Path"};
+
+        // Create an empty table model with the defined column names
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        // Populate the table model with the query result
+        while (res.next()) {
+            Object[] row = {res.getString("USN"), res.getString("stdname"),res.getString("father"),res.getString("mother"),res.getString("gender"),res.getString("dob"),
+                res.getString("stdmail"), res.getString("stdbranch"),res.getString("sem"),res.getString("stdsection"), res.getString("phone"), res.getString("siPath")};
+            model.addRow(row);
+        }
+
+        // Set the table model to the table
+        stable.setModel(model);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+public void showSRecord(String usn) {
+    try {
+        int clgid = LOGIN.CollegeIDHolder.getTeacherCollegeID();
+        String sql = "SELECT * FROM student WHERE clgid=? AND USN=?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, clgid);
+        preparedStatement.setString(2, usn);        
+        ResultSet res = preparedStatement.executeQuery(); 
+
+        // Define column names for your table model
+        String[] columnNames = {"USN", "Student Name","Father Name","Mother Name","Gender","DOB", "Email", "Branch","Semester","Section", "Phone No", "Image Path"};
+
+        // Create an empty table model with the defined column names
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        // Populate the table model with the query result
+        while (res.next()) {
+            Object[] row = {res.getString("USN"), res.getString("stdname"),res.getString("father"),res.getString("mother"),res.getString("gender"),res.getString("dob"),
+                res.getString("stdmail"), res.getString("stdbranch"),res.getString("sem"),res.getString("stdsection"), res.getString("phone"), res.getString("siPath")};
+            model.addRow(row);
+        }
+
+        // Set the table model to the table
+        stable.setModel(model);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        try {
+              if(susn.getText().isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Enter Teacher ID No.");
+                        return;
+            }
+               int clgid = 0;
+    clgid=LOGIN.CollegeIDHolder.getTeacherCollegeID();
+    // Prepare and execute the SQL query with PreparedStatement
+    String sql = "SELECT * FROM student WHERE USN=? AND clgid=?";
+    PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+    // Assuming tid is a JTextField for entering teacher ID
+    String id = susn.getText();
+    preparedStatement.setString(1, id);
+        preparedStatement.setInt(2, clgid);
+    showSRecord(id);
+    // Execute the query
+    ResultSet trs = preparedStatement.executeQuery();
+
+    // Process the result set
+    if (trs.next()) {
+         sname.setText("stdname");
+    sfname.setText("father");
+    smname.setText("mother");
+    semail.setText("stdmail");
+    sbranch.setText("stdbranch");
+    usn.setText("USN");
+    sphone.setText("phone");
+   dob.setDate(null);
+    gen.setSelectedIndex(0);
+            String path=trs.getString("siPath");
+        imagePath=path;
+        simg.setIcon(imageAdjust(path,null));
+    } else {
+        JOptionPane.showMessageDialog(null, "Record Not Found");
+    }
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(null, e);
+}
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void stableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_stableMouseClicked
+             model1=(DefaultTableModel) stable.getModel();
+             rowIndex = stable.getSelectedRow();
+             susn.setText(model1.getValueAt(rowIndex,0).toString());
+             usn.setText(model1.getValueAt(rowIndex,0).toString());
+             sname.setText(model1.getValueAt(rowIndex,1).toString());
+             sfname.setText(model1.getValueAt(rowIndex,2).toString());
+             smname.setText(model1.getValueAt(rowIndex,3).toString());
+             semail.setText(model1.getValueAt(rowIndex,6).toString()); 
+              sbranch.setText(model1.getValueAt(rowIndex,7).toString());
+             sphone.setText(model1.getValueAt(rowIndex,10).toString());
+        try {
+             // TODO add your handling code here:
+             
+             Date date = new SimpleDateFormat("yyyy-MM-dd").parse(model1.getValueAt(rowIndex, 5).toString());
+             dob.setDate(date);
+            
+         } catch (ParseException ex) {
+             Logger.getLogger(thome.class.getName()).log(Level.SEVERE, null, ex);
+         }
+        String gender = model1.getValueAt(rowIndex,4).toString();
+        if(  gender.equals("Male")){
+            gen.setSelectedIndex(1);
+        }
+        else{
+            gen.setSelectedIndex(0);
+        }
+        String path = model1.getValueAt(rowIndex,11).toString();
+        simg.setIcon(imageAdjust(path,null));
+    }//GEN-LAST:event_stableMouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        susn.setText(null);
+    }//GEN-LAST:event_jButton3ActionPerformed
+private ImageIcon imageAdjust(String path,byte[] pic){
+    ImageIcon myImg =null;
+    if(path != null){
+        myImg = new ImageIcon(path);
+    }
+    else{
+        myImg = new ImageIcon(pic);
+    }
+    Image img = myImg.getImage();
+    Image newImg = img.getScaledInstance(simg.getWidth(), simg.getHeight(), Image.SCALE_SMOOTH);
+    ImageIcon icon = new ImageIcon(newImg);
+    return icon;
+}
     /**
      * @param args the command line arguments
      */
@@ -1677,19 +2137,15 @@ public class thome extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new thome().setVisible(true);
+                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> att;
-    private javax.swing.JComboBox<String> clg;
-    private javax.swing.JComboBox<String> clg5;
-    private javax.swing.JComboBox<String> clg6;
-    private javax.swing.JTextField email;
-    private javax.swing.JLabel img3;
-    private javax.swing.JLabel img4;
-    private javax.swing.JLabel img5;
+    private com.toedter.calendar.JDateChooser dob;
+    private javax.swing.JComboBox<String> gen;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
@@ -1698,8 +2154,6 @@ public class thome extends javax.swing.JFrame {
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton25;
-    private javax.swing.JButton jButton26;
     private javax.swing.JButton jButton27;
     private javax.swing.JButton jButton29;
     private javax.swing.JButton jButton3;
@@ -1718,8 +2172,6 @@ public class thome extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private com.toedter.calendar.JDateChooser jDateChooser2;
     private com.toedter.calendar.JDateChooser jDateChooser3;
     private com.toedter.calendar.JDateChooser jDateChooser4;
@@ -1752,7 +2204,6 @@ public class thome extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel56;
     private javax.swing.JLabel jLabel57;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1768,10 +2219,6 @@ public class thome extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel30;
-    private javax.swing.JPanel jPanel31;
-    private javax.swing.JPanel jPanel32;
-    private javax.swing.JPanel jPanel33;
     private javax.swing.JPanel jPanel34;
     private javax.swing.JPanel jPanel35;
     private javax.swing.JPanel jPanel36;
@@ -1792,29 +2239,33 @@ public class thome extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField sbranch;
+    private javax.swing.JComboBox<String> sec;
+    private javax.swing.JComboBox<String> sem;
+    private javax.swing.JTextField semail;
+    private javax.swing.JTextField sfname;
+    private javax.swing.JLabel simg;
+    private javax.swing.JTextField smname;
+    private javax.swing.JTextField sname;
+    private javax.swing.JTextField sphone;
     private javax.swing.JComboBox<String> ssec;
     private javax.swing.JComboBox<String> ssec1;
     private javax.swing.JComboBox<String> ssem;
     private javax.swing.JComboBox<String> ssem1;
+    private javax.swing.JTable stable;
+    private javax.swing.JTextField susn;
     private javax.swing.JTextField tbranch;
     private javax.swing.JTextField tbranch1;
-    private javax.swing.JTextField tname;
-    private javax.swing.JTextField tname1;
     private javax.swing.JTextField tname10;
-    private javax.swing.JTextField tname2;
-    private javax.swing.JTextField tname4;
     private javax.swing.JTextField tname5;
     private javax.swing.JTextField tname6;
     private javax.swing.JTextField tname7;
     private javax.swing.JTextField tname8;
     private javax.swing.JTextField tname9;
-    private javax.swing.JTextField tphone;
-    private javax.swing.JTextField tphone2;
+    private javax.swing.JTextField usn;
     // End of variables declaration//GEN-END:variables
 }
