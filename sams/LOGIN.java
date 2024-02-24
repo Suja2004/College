@@ -2,6 +2,7 @@
 package sams;
 
 import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +55,7 @@ Connection conn = null;
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         pass = new javax.swing.JPasswordField();
@@ -66,35 +67,33 @@ Connection conn = null;
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(102, 255, 102));
+        jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 255, 255), 2, true));
 
-        jPanel2.setBackground(new java.awt.Color(0, 204, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        jPanel2.setBackground(new java.awt.Color(102, 255, 102));
+        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED, new java.awt.Color(51, 153, 255), new java.awt.Color(102, 255, 255)));
 
-        jTextField1.setBackground(new java.awt.Color(102, 255, 102));
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jTextField1.setForeground(new java.awt.Color(255, 255, 255));
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setText("LOGIN");
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField1KeyTyped(evt);
-            }
-        });
+        jLabel4.setBackground(new java.awt.Color(102, 255, 102));
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("LOGIN");
+        jLabel4.setToolTipText("");
+        jLabel4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 153, 255), 4, true));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1)
+                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -105,6 +104,12 @@ Connection conn = null;
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("PASSWORD");
+
+        pass.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                passKeyPressed(evt);
+            }
+        });
 
         jLabel3.setBackground(new java.awt.Color(0, 204, 255));
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -130,6 +135,11 @@ Connection conn = null;
                 jButton1ActionPerformed(evt);
             }
         });
+        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButton1KeyPressed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(0, 204, 255));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -143,6 +153,11 @@ Connection conn = null;
         email.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 emailActionPerformed(evt);
+            }
+        });
+        email.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                emailKeyPressed(evt);
             }
         });
 
@@ -168,7 +183,7 @@ Connection conn = null;
                             .addComponent(email))
                         .addGap(34, 34, 34)
                         .addComponent(jLabel3)
-                        .addGap(0, 90, Short.MAX_VALUE)))
+                        .addGap(0, 86, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -189,7 +204,7 @@ Connection conn = null;
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(84, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -224,17 +239,29 @@ public static String pHash(String password) {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
          
-int teacherCollegeID = 0;
-int teacherID = 0;
-String adminCollege = null;
-int adminCollegeID = 0;
-int adminID = 0;
+int teacherCollegeID;
+int teacherID ;
+String adminCollege;
+int adminCollegeID;
+int adminID;
 
 try {
     stmt = conn.createStatement();
     String userEmail = email.getText();
     String userPass = pHash(pass.getText());
     // First, check against the "admin" table
+    String sadname=pHash(userEmail);
+    String sadminSql = "SELECT * FROM super WHERE username = ? AND pass = ?";
+    PreparedStatement sadminPreparedStatement = conn.prepareStatement(sadminSql);
+    sadminPreparedStatement.setString(1, sadname);
+    sadminPreparedStatement.setString(2, userPass);
+
+    ResultSet sadminResultSet = sadminPreparedStatement.executeQuery();
+    if (sadminResultSet.next()) {
+        setVisible(false);
+        SAHOME object = new SAHOME();    
+        object.setVisible(true);
+    } else {
     String adminSql = "SELECT * FROM admin WHERE mail = ? AND password = ?";
     PreparedStatement adminPreparedStatement = conn.prepareStatement(adminSql);
     adminPreparedStatement.setString(1, userEmail);
@@ -258,7 +285,7 @@ try {
            JOptionPane.showMessageDialog(null, "College Id Not Found");
         }
         }catch(Exception e){
-                            JOptionPane.showMessageDialog(null, e);
+           JOptionPane.showMessageDialog(null, e);
 
         }
         // Login successful for admin
@@ -301,6 +328,7 @@ try {
             }
         }
     }
+}
 } catch (HeadlessException | SQLException e) {
     JOptionPane.showMessageDialog(null, e);
 }
@@ -330,10 +358,115 @@ try {
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
 
-    private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
+    private void emailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_emailKeyPressed
         // TODO add your handling code here:
-         jTextField1.setEditable(false);
-    }//GEN-LAST:event_jTextField1KeyTyped
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            pass.requestFocus();
+        }
+    }//GEN-LAST:event_emailKeyPressed
+
+    private void passKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passKeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+         
+int teacherCollegeID = 0;
+int teacherID = 0;
+String adminCollege = null;
+int adminCollegeID = 0;
+int adminID = 0;
+
+try {
+    stmt = conn.createStatement();
+    String userEmail = email.getText();
+    String userPass = pHash(pass.getText());
+    // First, check against the "admin" table
+    String sadname=pHash(userEmail);
+    String sadminSql = "SELECT * FROM super WHERE username = ? AND pass = ?";
+    PreparedStatement sadminPreparedStatement = conn.prepareStatement(sadminSql);
+    sadminPreparedStatement.setString(1, sadname);
+    sadminPreparedStatement.setString(2, userPass);
+
+    ResultSet sadminResultSet = sadminPreparedStatement.executeQuery();
+    if (sadminResultSet.next()) {
+        setVisible(false);
+        SAHOME object = new SAHOME();    
+        object.setVisible(true);
+    } else {
+    String adminSql = "SELECT * FROM admin WHERE mail = ? AND password = ?";
+    PreparedStatement adminPreparedStatement = conn.prepareStatement(adminSql);
+    adminPreparedStatement.setString(1, userEmail);
+    adminPreparedStatement.setString(2, userPass);
+
+    ResultSet adminResultSet = adminPreparedStatement.executeQuery();
+    if (adminResultSet.next()) {
+        try{
+        adminID = adminResultSet.getInt("id"); 
+            TeacherIDHolder.setTeacherID(adminID);
+            adminCollege = adminResultSet.getString("college");
+            String acSql = "SELECT * FROM college WHERE clgname = ? ";
+            PreparedStatement pstm = conn.prepareStatement(acSql);
+            pstm.setString(1, adminCollege);
+        ResultSet adminC = pstm.executeQuery(); 
+        if(adminC.next()){
+            adminCollegeID = adminC.getInt("clgid");
+            CollegeIDHolder.setTeacherCollegeID(adminCollegeID); 
+        }
+        else{
+           JOptionPane.showMessageDialog(null, "College Id Not Found");
+        }
+        }catch(Exception e){
+           JOptionPane.showMessageDialog(null, e);
+
+        }
+        // Login successful for admin
+        setVisible(false);
+        AHOME object = new AHOME();    
+        object.setVisible(true);
+    } else {
+        // If not found in the admin table, check against the "teacher" table
+        String teacherSql = "SELECT * FROM teacher WHERE mail = ? AND password = ?";
+        PreparedStatement teacherPreparedStatement = conn.prepareStatement(teacherSql);
+        teacherPreparedStatement.setString(1, userEmail);
+        teacherPreparedStatement.setString(2, userPass);
+
+        ResultSet teacherResultSet = teacherPreparedStatement.executeQuery();
+
+        if (teacherResultSet.next()) {
+            // Login successful for teacher
+            teacherID = teacherResultSet.getInt("id"); 
+            TeacherIDHolder.setTeacherID(teacherID);
+            teacherCollegeID = teacherResultSet.getInt("clgid"); 
+            CollegeIDHolder.setTeacherCollegeID(teacherCollegeID); 
+            setVisible(false);
+            thome object = new thome();
+            object.setVisible(true);
+        } else {
+            String studentSql = "SELECT * FROM student WHERE stdmail = ? AND stdpassword = ?";
+            PreparedStatement studentPreparedStatement = conn.prepareStatement(studentSql);
+            studentPreparedStatement.setString(1, userEmail);
+            studentPreparedStatement.setString(2, userPass);
+
+            ResultSet studentResultSet = studentPreparedStatement.executeQuery();
+
+            if (studentResultSet.next()) {
+                // Login successful for student
+                setVisible(false);
+                thome object = new thome();
+                object.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Email or Password is invalid");
+            }
+        }
+    }
+}
+} catch (HeadlessException | SQLException e) {
+    JOptionPane.showMessageDialog(null, e);
+}        }
+    }//GEN-LAST:event_passKeyPressed
+
+    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1KeyPressed
 
     /**
      * @param args the command line arguments
@@ -378,9 +511,9 @@ try {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPasswordField pass;
     // End of variables declaration//GEN-END:variables
 }

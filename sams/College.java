@@ -8,29 +8,26 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Suja
- */
+
 public class College {
-           Connection conn = DB.Connection(); 
+            Connection conn = DB.Connection(); 
 
 
-        public int getMax(){
-    int id = 0;
-    Statement st;
-    try{
-        st = conn.createStatement();
-        ResultSet rs = st.executeQuery("Select MAX(clgid) from college");
-        while(rs.next()){
-            id=rs.getInt(1);
-        }
-        
-    }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e);
-    }
-    return id+1;
-    
-}
+         public int getMax(){
+     int id = 0;
+     Statement st;
+     try{
+         st = conn.createStatement();
+         ResultSet rs = st.executeQuery("Select MAX(clgid) from college");
+         while(rs.next()){
+             id=rs.getInt(1);
+         }
+
+     }catch(Exception e){
+             JOptionPane.showMessageDialog(null, e);
+     }
+     return id+1;
+
+ }
 }
 
